@@ -1,0 +1,106 @@
+---
+title: "Data Import"
+output: github_document
+---
+
+```{r, echo = FALSE}
+library(tidyverse)
+library(readxl)
+library(haven)
+```
+
+
+I'm an R Markdown document! 
+
+## Data Import: CSVs
+
+Let's import data using the `readr` package.
+
+```{r}
+litters_df = read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+```
+
+
+Look at the data
+
+```{r}
+litters_df
+
+head(litters_df)
+tail(litters_df)
+```
+
+
+Helpful way to view the whole dataset, but don't have it in the rmd file because it creates a new window and creates problems when knit.
+
+```{r,  eval = FALSE}
+View(litters_df)
+```
+
+
+The `skimr` package gives a quick summary and overview of the entire dataset. 
+
+```{r}
+skimr::skim(litters_df)
+```
+
+
+`read_csv` options..
+
+can treat random numbers as missing observations when data are coded weirdly
+
+Information in the first couple of rows, can skip how many rows at the beginning of the spreadsheet
+
+```{r, eval = FALSE}
+read_csv("data/FAS_litters.csv", na = c("", "NA", 999, 88), skip = 2)
+```
+
+Update with the col_type argument since it only reads the first 1000 rows and decide what variable type that is, which could be wrong. 
+
+
+## Other file formats 
+
+We need to read in an excel spreadsheet ...
+
+```{r}
+mlb_df = read_excel("data/mlb11.xlsx")
+```
+
+```{r, eval = FALSE}
+View(mlb_df)
+```
+
+```{r}
+lotr_words_df = 
+  read_excel(
+    "data/LotR_Words.xlsx",
+    range = "B3:D6"
+  )
+```
+
+## STill more formats ...
+
+Read in a SAS dataset.
+
+```{r}
+pulse_df = read_sas("data/public_pulse_data.sas7bdat")
+```
+
+## Data export 
+
+```{r}
+write_csv(lotr_words_df, file = "results/lotr_words_df.csv")
+```
+
+Use relative paths so that things are well-organized and tightly-bundled into one place
+
+## Why not base r???
+
+```{r}
+dont_do_this_df = read.csv("data/FAS_litters.csv")
+```
+
+* Import as a dataframe and print the entire thing.
+* Categorical or factor instead of character variables; different choice; tibble better than df; read_csv is almost always better than read.csv
+
