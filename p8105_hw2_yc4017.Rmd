@@ -13,16 +13,24 @@ library(tidyverse)
 
 # Problem 1
 
-* Read and clean the data
+* We first read in the csv file and converted the column types for route8 to route 11 from double to characters to be consistent with the rest of the route variables.
+
 * Retain line, station, name, station latitute/longtitude, routes served, entry, vending, entrance type, and ADA compliance
+
 * Convert the entry variable from character to a logical variable
 
 ```{r load dataset}
-nyc_transit <- read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+nyc_transit = read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+                       col_types = cols(Route8 = "c", Route9 = "c", Route10 = "c", Route11 = "c")) %>% 
   janitor::clean_names() %>% 
   select(line:ada, -c(exit_only, staffing, staff_hours)) %>% 
   mutate(entry = if_else(entry == "YES", TRUE, FALSE))
 ```
+
+trans_ent = 
+  read_csv(
+    "data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+    col_types = ) 
 
 Now we describe the characteristics of this nyc_transit dataset:
 
@@ -37,14 +45,14 @@ Now we describe the characteristics of this nyc_transit dataset:
 Next, we will use the following code chunks to answer some questions about the dataset. 
 
 ```{r distinct dataset}
-nyc_transit_dist <- nyc_transit %>% 
+nyc_transit_dist = nyc_transit %>% 
   distinct(line, station_name)
 ```
 
 * There are `r nrow(nyc_transit_dist)` distinct stations in NYC subway. 
 
 ```{r ada compliant}
-nyc_transit_ada <- nyc_transit %>% 
+nyc_transit_ada = nyc_transit %>% 
   filter(ada == TRUE) %>% 
   distinct(line, station_name) 
 ```
@@ -52,7 +60,7 @@ nyc_transit_ada <- nyc_transit %>%
 * There are `r nrow(nyc_transit_ada)` stations that are ADA compliant.
 
 ```{r entrance}
-nyc_transit_ent <- nyc_transit %>% 
+nyc_transit_ent = nyc_transit %>% 
   filter(vending == "NO") %>% 
   pull(entry) %>% 
   mean
@@ -62,7 +70,28 @@ nyc_transit_ent <- nyc_transit %>%
 
 Finally, we reformat data so that the route number and route name are distinct variables.
 
-```{r}
-
+```{r distinct A}
+nyc_transit_a = nyc_transit %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_number",
+    values_to = "route"
+  ) %>% 
+  filter(route == "A") %>% 
+  distinct(line, station_name)
 ```
 
+There are `r nrow(nyc_transit_a)` distinct stations that serve the A train.
+
+```{r}
+nyc_transit_a_ada = nyc_transit %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_number",
+    values_to = "route"
+  ) %>% 
+  filter(route == "A", ada == TRUE) %>% 
+  distinct(line, station_name)
+```
+
+There are `r nrow(nyc_transit_a_ada)` distinct stations that serve the A train and are ADA compliant.
