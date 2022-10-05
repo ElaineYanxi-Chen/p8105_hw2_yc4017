@@ -7,7 +7,7 @@ output: github_document
 
 First we load the packages necessary to knit this document.
 
-```{r, message = FALSE}
+```{r load package, message = FALSE}
 library(tidyverse)
 ```
 
@@ -17,16 +17,52 @@ library(tidyverse)
 * Retain line, station, name, station latitute/longtitude, routes served, entry, vending, entrance type, and ADA compliance
 * Convert the entry variable from character to a logical variable
 
-```{r}
+```{r load dataset}
 nyc_transit <- read_csv("data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>% 
   select(line:ada, -c(exit_only, staffing, staff_hours)) %>% 
   mutate(entry = if_else(entry == "YES", TRUE, FALSE))
 ```
 
-Now we describe the characteristics of this `nyc_transit` dataset:
+Now we describe the characteristics of this nyc_transit dataset:
+
 * This datasets includes `r ncol(nyc_transit)` variables for `r nrow(nyc_transit)` observations, however, there seems to some repeating observations in this dataset. 
+
 * The dataset contains variables such as the subway line, station names, the station location expressed in latitude and longitude. 
-* The dataset was first imported as a csv file, before the names were cleaned using the `janitor` package so that all variables and observations follow the snake case convention. We then selected only the variables of interest, before mutating the entry variable from a character variable with `YES` or `NO` responses to a logical variable with `TRUE` or `FALSE` reponses. 
+
+* The dataset was first imported as a csv file, before the names were cleaned using the `janitor` package so that all variables and observations follow the snake case convention. We then selected only the variables of interest, before mutating the entry variable from a character variable with `YES` or `NO` responses to a logical variable with `TRUE` or `FALSE` responses. 
+
 * The data is not tidy since there is quite a bit of repeat with routes served.
+
+Next, we will use the following code chunks to answer some questions about the dataset. 
+
+```{r distinct dataset}
+nyc_transit_dist <- nyc_transit %>% 
+  distinct(line, station_name)
+```
+
+* There are `r nrow(nyc_transit_dist)` distinct stations in NYC subway. 
+
+```{r ada compliant}
+nyc_transit_ada <- nyc_transit %>% 
+  filter(ada == TRUE) %>% 
+  distinct(line, station_name) 
+```
+
+* There are `r nrow(nyc_transit_ada)` stations that are ADA compliant.
+
+```{r entrance}
+nyc_transit_ent <- nyc_transit %>% 
+  filter(vending == "NO") %>% 
+  pull(entry) %>% 
+  mean
+```
+
+* The proportion of station entrances/exits without vending allow entrance is `r round(nyc_transit_ent * 100, 1)`%.
+
+Finally, we reformat data so that the route number and route name are distinct variables.
+
+```{r}
+
+```
 
