@@ -125,6 +125,7 @@ prof_trash = prof_trash %>% mutate(trash_wheel = "prof",
                       year = as.character(year))
 
 joint_trash = full_join(mr_trash, prof_trash)
+# Use binding rows? need to check this 
 ```
 
 Below we describe some key characteristics of this joint dataset.
@@ -135,6 +136,38 @@ Below we describe some key characteristics of this joint dataset.
 
   * The month, year, and specific data were used to describe the time when trash were collected. 
 
-  * The amount of trash includes the thet weight in tons and the volume in cubic yards. 
+  * The amount of trash includes the weight in tons and the volume in cubic yards. 
 
   * The type of trash includes plastic bottle, polystyrene, cigarette butts, glass bottles, grocery bags, and chip bags from both Mr Trash Wheel and Professor Trash Wheel, and sports balls from Mr Trash Wheel.
+
+The total weight of trash collected by Professor Trash Wheel can be found with the following code:
+
+```{r}
+joint_trash %>% filter(trash_wheel == "prof") %>% select(weight_tons) %>% sum
+```
+
+The total weight is 190.12 tons.
+
+The total number of sports balls collected by Mr. Trash Wheel in 2020 can be found by the following code:
+
+```{r}
+joint_trash %>% filter(trash_wheel == "mr", year == "2020") %>% 
+  select(sports_balls) %>% sum
+```
+
+The total number of sports balls collected is 856. 
+
+# Problem 3: FiveThirtyEight
+
+```{r}
+pols_month = read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(col = mon, into = c("year", "month", "day", sep = "-")) %>% 
+  select(-c("-", "day")) %>% 
+  mutate(month = month.name[as.numeric(month)]) %>% 
+  pivot_longer(c(prez_gop, prez_dem), names_to = "president", names_prefix = "prez_") %>% 
+  filter(value == "1")
+
+# Issue with the prez_gop value == 2?
+```
+
