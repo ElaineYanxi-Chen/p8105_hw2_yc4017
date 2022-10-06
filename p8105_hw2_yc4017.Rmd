@@ -103,6 +103,8 @@ There are `r nrow(nyc_transit_a_ada)` distinct stations that serve the A train a
 
 # Problem 2: Mr. Trash Wheel
 
+## Import Mr. Trash Wheel
+
 We will first read the excel sheet Mr. Trash Wheel from the Excel file and clean it.
 
 ```{r}
@@ -112,6 +114,8 @@ mr_trash = read_excel("data/Trash Wheel Collection Data.xlsx", sheet = "Mr. Tras
   mutate(sports_balls = as.integer(round(sports_balls, 0)))
 ```
 
+## Import Professor Trash Wheel
+
 We will then use a similar process to import, clean, and organize the data for Professor Trash Wheel. 
 
 ```{r}
@@ -119,6 +123,8 @@ prof_trash = read_excel("data/Trash Wheel Collection Data.xlsx", sheet = "Profes
   janitor::clean_names() %>% 
   drop_na(dumpster) 
 ```
+
+## Merge Trash Wheel data
 
 Now we will assign an additional variable to keep track of which Trash Wheel is which, then combine the two datasets.
 
@@ -128,9 +134,10 @@ mr_trash = mr_trash %>% mutate(trash_wheel = "mr")
 prof_trash = prof_trash %>% mutate(trash_wheel = "prof",
                       year = as.character(year))
 
-joint_trash = full_join(mr_trash, prof_trash)
-# Use binding rows? need to check this 
+joint_trash = bind_rows(mr_trash, prof_trash) %>% janitor::clean_names()
 ```
+
+## Describe the datasets
 
 Below we describe some key characteristics of this joint dataset.
 
@@ -171,11 +178,11 @@ pols = read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>%
   separate(col = mon, into = c("year", "month", "day"), sep = "-", convert = TRUE) %>% 
   mutate(month = tolower(month.abb[as.numeric(month)])) %>% 
   pivot_longer(c(prez_gop, prez_dem), names_to = "president", names_prefix = "prez_") %>% 
-  filter(value == "1") %>% 
+  filter(value != "0") %>% 
   select(-c("day", "value"))
 ```
 
-Note that there are 5 observations in this dataset with `prez_gop` == 2, which according to the coding should only be in (1 == yes, 0 == no). These 5 observations have been filtered out.
+Note that there are 5 observations in this dataset with `prez_gop` == 2, which according to the coding should only be in (1 == yes, 0 == no). 
 
 ## Clean the data in snp.csv
 
