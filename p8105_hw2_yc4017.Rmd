@@ -224,5 +224,24 @@ final_merge = left_join(pols_snp, unemployment)
 
 ### `snp`
 
+* There are `r ncol(snp)` variables for `r nrow(snp)` observations in this dataset. 
+
+* The dataset describes the time (`year`, `month`, and `day`) and the variable `close`, the closing values of the Standard & Poor's stock market index on the associated date, which is often used as a representative measure of stock market as a whole.
+
+* The dataset spans `r max(snp$year) - min(snp$year)` years between years `r range(snp$year)`.
+
 ### `unemployment`
 
+* There are `r ncol(unemployment)` variables for `r nrow(unemployment)` observations in this dataset. 
+
+* The dataset describes the time (`year` and `month`) and the variable `unemploy_perc`, which indicates the percentage of unemployment in the associated month and year.
+
+* The dataset spans `r max(unemployment$year) - min(unemployment$year)` years between years `r range(unemployment$year)`.
+
+### The merged dataset: `final_merge`
+
+* There are `r ncol(final_merge)` variables for `r nrow(final_merge)` observations in this dataset. 
+
+* The dataset describes the time (`year`, `month` and `day`), the government composition in the US (number of Democrats and Republicans as representatives, governors, and senates, and the party that the President belongs to), the measure of the stock market (`close`), and the percentage of unemployment in the US on the associated dates (`unemploy_perc`).
+
+* The dataset spans `r max(final_merge$year) - min(final_merge$year)` years between years `r range(final_merge$year)`.
