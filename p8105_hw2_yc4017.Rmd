@@ -159,7 +159,9 @@ The total number of sports balls collected is 856.
 
 # Problem 3: FiveThirtyEight
 
-```{r}
+## Clean the data in pols-month.csv
+
+```{r load pols_month, message = FALSE}
 pols_month = read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
   janitor::clean_names() %>% 
   separate(col = mon, into = c("year", "month", "day", sep = "-")) %>% 
@@ -167,7 +169,35 @@ pols_month = read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>%
   mutate(month = month.name[as.numeric(month)]) %>% 
   pivot_longer(c(prez_gop, prez_dem), names_to = "president", names_prefix = "prez_") %>% 
   filter(value == "1")
+```
 
-# Issue with the prez_gop value == 2?
+Note that there are 5 observations in this dataset with `prez_gop` == 2, which according to the coding should only be in (1 == yes, 0 == no). These 5 observations have been filtered out.
+
+## Clean the data in snp.csv
+
+```{r load snp, message = FALSE}
+snp = read_csv("data/fivethirtyeight_datasets/snp.csv") %>%
+  janitor::clean_names() %>% 
+  separate(col = date, into = c("year", "month", "day", sep = "/")) %>% 
+  select(-"/") %>% 
+  mutate(month = month.abb[as.numeric(month)]) %>% 
+  arrange(year, month) %>% 
+  select(year, month, everything())
+```
+
+## Tidy the unemployment data
+
+```{r load unemploy, message = FALSE}
+unemploy = read_csv("data/fivethirtyeight_datasets/unemployment.csv") %>%
+  janitor::clean_names() %>% 
+  pivot_longer(jan:dec, names_to = "month", values_to = "unemploy_perc")
+```
+
+Here we have to make sure the key variables take the same values. The months are all spelled as lower cases in the `unemployment` dataset, but the first letters are capitalized in the `pols_month` and `snp` datasets.
+
+## Join the three datasets
+
+```{r}
+
 ```
 
